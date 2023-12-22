@@ -19,9 +19,9 @@ defmodule AocTest do
   doctest Aoc.Day2
 
   test "day2 : 1" do
-    assert rd(2, 1) |> Aoc.Day2.first_part == 142
+    assert rd(2, 1) |> Aoc.Day2.first_part == 8
   end
   test "day2 : 2" do
-    assert rd(2, 2) |> Aoc.Day2.second_part == 281
+    assert rd(2, 2) |> Aoc.Day2.second_part == 2286
   end
 end
