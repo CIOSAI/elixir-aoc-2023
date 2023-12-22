@@ -1,4 +1,4 @@
-# Docker Image for Advent of Code in Elixir
+# Docker Container Stack for Advent of Code in Elixir
 
 [Advent of Code](https://adventofcode.com/)
 
