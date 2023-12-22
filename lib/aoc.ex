@@ -45,12 +45,8 @@ defmodule Aoc.Day2 do
   def entries_extract(str) do
     str
     |> String.split(",")
-    |> Enum.map(fn column ->
-      column |> String.split |> List.to_tuple
-    end)
-    |> Enum.map(fn column ->
-      { elem(column, 1), elem(column, 0) |> Integer.parse |> elem(0) }
-    end)
+    |> Enum.map(&( &1 |> String.split |> List.to_tuple ))
+    |> Enum.map(&{ elem(&1, 1), elem(&1, 0) |> Integer.parse |> elem(0) })
     |> Map.new
   end
 
@@ -81,9 +77,7 @@ defmodule Aoc.Day2 do
       |> then(fn entry ->
         {
           elem(entry, 0) |> get_game_index(),
-          elem(entry, 1) |> String.split(";") |> Enum.map(fn reveal ->
-            entries_extract(reveal)
-          end)
+          elem(entry, 1) |> String.split(";") |> Enum.map(&entries_extract/1)
         }
         end)
       |> game_to_val()
@@ -93,7 +87,7 @@ defmodule Aoc.Day2 do
 
   def max_of_color(list_of_maps, color) do
     list_of_maps
-    |> Enum.map(fn j -> Map.get(j, color, 0) end)
+    |> Enum.map(&(Map.get(&1, color, 0)))
     |> Enum.max
   end
 
@@ -103,13 +97,11 @@ defmodule Aoc.Day2 do
     |> Enum.map(fn i ->
       i
       |> String.split(":") |> List.to_tuple
-      |> elem(1) |> String.split(";") |> Enum.map(fn reveal ->
-        entries_extract(reveal)
-      end)
+      |> elem(1) |> String.split(";") |> Enum.map(&entries_extract/1)
     end)
-    |> Enum.map(fn i ->
-      max_of_color(i, "red") * max_of_color(i, "green") * max_of_color(i, "blue")
-    end)
+    |> Enum.map(&(
+      max_of_color(&1, "red") * max_of_color(&1, "green") * max_of_color(&1, "blue")
+    ))
     |> Enum.sum
 
   end
