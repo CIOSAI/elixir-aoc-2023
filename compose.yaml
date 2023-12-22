@@ -1,0 +1,10 @@
+services:
+  # name of the container
+  elixir-aoc-2023:
+    build:
+      context: .
+    volumes:
+      - ./inputs:/usr/src/app/inputs
+      - ./lib:/usr/src/app/lib
+      - ./test:/usr/src/app/test
+      - ./mix.exs:/usr/src/app/mix.exs
