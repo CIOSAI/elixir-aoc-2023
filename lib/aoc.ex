@@ -107,3 +107,82 @@ defmodule Aoc.Day2 do
   end
 
 end
+
+defmodule Aoc.Day4 do
+  def str_to_int_list(str) do
+    str |> String.split |> Enum.map(&Integer.parse/1) |> Enum.map(&(elem(&1, 0)))
+  end
+
+  def first_part(input) do
+    input |> String.split("\n")
+    |> Enum.map(&(&1 |> String.replace(~r/Card\s+[0-9]+:/, "")))
+    |> Enum.map(&(&1 |> String.split("|") |> List.to_tuple))
+    |> Enum.map(fn {fst, snd} -> {str_to_int_list(fst) |> MapSet.new, str_to_int_list(snd) |> MapSet.new} end)
+    |> Enum.map(fn {fst, snd} -> MapSet.intersection(fst, snd) |> MapSet.size end)
+    |> Enum.map(&(if &1==0 do 0 else 2**(&1-1) end))
+    |> Enum.sum
+  end
+
+  def scratch([head | tail], acc) do
+    # current index
+    i = head |> elem(0)
+
+    # splits every cards after into
+    tail_split = tail |> Enum.group_by(fn {j, _} -> j==i end)
+    # those with the same index (thus same score, and wins the same cards)
+    same_ind = Map.get(tail_split, true, [])
+    # those without (thus win different cards and need to be evaluated)
+    leftover = Map.get(tail_split, false, [])
+
+    won_cards = if elem(head, 1) == 0 do []
+    else
+      tail
+      # all cards from index+1 to index+score
+      # example:
+      # {0, 4} wins cards of indices 1 to 0+4 i.e. 1, 2, 3, 4
+      |> Enum.filter(fn {j, _} ->
+          Enum.member?((i+1)..(i+elem(head, 1)), j)
+        end)
+      # since the tail may have multiple copies of the same card
+      # we check the index, and keep only 1 of each index
+      |> Enum.group_by(&(elem(&1, 0)), &(&1))
+      |> Map.values
+      # the values are wrapped in list because they are technically groups?
+      |> Enum.map(&hd/1)
+      # duplicate the all the cards this card won by the amount of cards with the winning
+      |> List.duplicate(length(same_ind)+1)
+      |> List.flatten
+    end
+
+    # dbg(i)
+    # dbg(won_cards)
+    # dbg(Enum.frequencies_by(acc++won_cards, &(elem(&1, 0))))
+
+    scratch(won_cards ++ leftover, acc++won_cards)
+  end
+
+  def scratch([], acc) do acc end
+
+  def second_part(input) do
+    score_list = input |> String.split("\n")
+    |> Enum.map(&(&1 |> String.replace(~r/Card\s+[0-9]+:/, "")))
+    |> Enum.map(&(&1 |> String.split("|") |> List.to_tuple))
+    |> Enum.map(fn {fst, snd} -> {str_to_int_list(fst) |> MapSet.new, str_to_int_list(snd) |> MapSet.new} end)
+    |> Enum.map(fn {fst, snd} -> MapSet.intersection(fst, snd) |> MapSet.size end)
+
+    # list of {index, score}
+    indexed = Enum.zip(0..(length(score_list)-1), score_list)
+
+    # count total cards won + initial cards
+    (scratch(indexed, []) ++ indexed)
+    |> Enum.count
+  end
+end
+
+defmodule Aoc.Day26 do
+  def first_part(input) do
+  end
+
+  def second_part(input) do
+  end
+end

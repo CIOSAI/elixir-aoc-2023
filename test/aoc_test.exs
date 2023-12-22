@@ -24,4 +24,14 @@ defmodule AocTest do
   test "day2 : 2" do
     assert rd(2, 2) |> Aoc.Day2.second_part == 2286
   end
+
+
+  doctest Aoc.Day4
+
+  test "day4 : 1" do
+    assert rd(4, 1) |> Aoc.Day4.first_part == 13
+  end
+  test "day4 : 2" do
+    assert rd(4, 2) |> Aoc.Day4.second_part == 30
+  end
 end
