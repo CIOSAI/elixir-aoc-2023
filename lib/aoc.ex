@@ -179,10 +179,81 @@ defmodule Aoc.Day4 do
   end
 end
 
-defmodule Aoc.Day26 do
+defmodule Aoc.Day5 do
+  def to_int(str) do Integer.parse(str) |> elem(0) end
+
+  def parse_dest(str) do
+    str |> String.split
+    |> Enum.map(&to_int/1)
+    |> List.to_tuple
+    |> then(fn {dest, src, size} ->
+      %{
+        :in_range => src..(src+size-1),
+        :offset   => dest-src
+      }
+    end)
+  end
+
+  def parse_map(str_list) do
+    dests = str_list |> Enum.map(&parse_dest/1)
+    fn src ->
+      src + Enum.find(dests, %{:offset => 0}, &(src in &1[:in_range]))[:offset]
+    end
+  end
+
+  def parse_dest_maps(str_list) do
+    str_list
+    |> Enum.map(&String.trim/1)
+    |> Enum.map(&(String.split(&1, "\r\n")))
+    |> Enum.map(&parse_map/1)
+  end
+
+  def process_input(input) do
+    input
+    |> String.split("\r\n\r\n")
+    |> Enum.map(&(String.replace(&1, ~r/.+:/, "")))
+  end
+
   def first_part(input) do
+    [seeds_str | dest_maps_str] = process_input(input)
+
+    seeds = seeds_str |> String.split |> Enum.map(&to_int/1)
+
+    dest_maps = parse_dest_maps(dest_maps_str)
+
+    seeds
+    |> Enum.map(fn seed ->
+      dest_maps
+      |> Enum.reduce(seed, fn map, acc -> map.(acc) end)
+    end)
+    |> Enum.min
   end
 
   def second_part(input) do
+    [seeds_str | dest_maps_str] = process_input(input)
+
+    seeds = seeds_str |> String.split |> Enum.map(&to_int/1)
+
+    dest_maps = parse_dest_maps(dest_maps_str)
+
+    seeds
+    |> Enum.chunk_every(2)
+    |> Enum.map(&List.to_tuple/1)
+    |> Enum.map(fn {start, size} -> start..(start+size-1) end)
+    # |> Enum.map(fn seed ->
+    #   dest_maps
+    #   |> Enum.reduce(seed, fn map, acc -> map.(acc) end)
+    # end)
+    |> List.flatten
+    # |> Enum.min
   end
 end
+
+
+# defmodule Aoc.Day26 do
+#   def first_part(input) do
+#   end
+
+#   def second_part(input) do
+#   end
+# end

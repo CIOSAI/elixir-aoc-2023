@@ -26,6 +26,9 @@ defmodule AocTest do
   end
 
 
+  # gave up on Aoc.Day3
+
+
   doctest Aoc.Day4
 
   test "day4 : 1" do
@@ -34,4 +37,15 @@ defmodule AocTest do
   test "day4 : 2" do
     assert rd(4, 2) |> Aoc.Day4.second_part == 30
   end
+
+
+  doctest Aoc.Day5
+
+  test "day5 : 1" do
+    assert rd(5, 1) |> Aoc.Day5.first_part == 35
+  end
+  # gave up on this one
+  # test "day5 : 2" do
+  #   assert rd(5, 2) |> Aoc.Day5.second_part == 46
+  # end
 end
